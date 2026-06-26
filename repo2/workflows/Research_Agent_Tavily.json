@@ -1,0 +1,164 @@
+{
+  "name": "N8N+ MANUS Research Agent for Tool with tavily",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "input"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ac3e6ebe-fcd0-4f70-aa24-d3dd1c1e649e",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "resource": "research",
+        "input": "={{ $json.input }}",
+        "options": {
+          "model": "mini"
+        }
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavily",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "33cdcadd-9052-4500-af02-0ff04abdb12d",
+      "name": "Create research task",
+      "credentials": {
+        "tavilyApi": {
+          "id": "6XMLgHQdtkR7IPFo",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "research",
+        "operation": "status",
+        "requestId": "={{ $json.request_id }}"
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavily",
+      "typeVersion": 1,
+      "position": [
+        624,
+        0
+      ],
+      "id": "902d8bee-be07-407c-b9ac-13ea8b685cb6",
+      "name": "Get research status",
+      "credentials": {
+        "tavilyApi": {
+          "id": "6XMLgHQdtkR7IPFo",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3b9072aa-7200-48d9-ae90-36cf52480ed4",
+              "name": "content",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        816,
+        0
+      ],
+      "id": "9bdd3533-6349-404a-8a22-529b87ec2cea",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        0
+      ],
+      "id": "1dc86b87-2664-4dad-b8c3-c885683eac9f",
+      "name": "Wait",
+      "webhookId": "343c4322-23e5-4dc5-898b-df276a4471c8"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Create research task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create research task": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get research status": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get research status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "77e8a0f2-99fb-49b8-bc8b-8230378ba601",
+  "meta": {},
+  "nodeGroups": [],
+  "id": "huQ2cFTWu60tbmV6",
+  "tags": []
+}
